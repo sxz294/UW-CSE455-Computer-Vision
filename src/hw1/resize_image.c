@@ -151,32 +151,47 @@ image bilinear_resize(image im, int w, int h)
   normalize it.That's what we'll do because the normalization function may
   be useful in the future!
 ************************************************************************/
-void l1_normalize(image im)
-{
-    // TODO
-    /***********************************************************************
-      This function divides each value in an image "im" by the sum of all the
-      values in the image and modifies the image in place.
-    ************************************************************************/
-    for (int i=0;i<im.c;i=i+1){
-        for (int j=0;j<im.h;j=j+1){
-            for (int k=0;k<im.w;k=k+1){
-                set_pixel(im,k,j,i,get_pixel(im,k,j,i)/im.w/im.h);
-            }
-        }
-
-    }
-}
-
-image make_box_filter(int w)
-{
-    // TODO
-    /***********************************************************************
-      This function makes a square filter of size "w x w". Hint:
-      Change the "make_image" arguments so that it is a square image of
-      width = height = w and number of channels = 1, with all entries equal
-      to 1. Then use "l1_normalize" to normalize your filter.
-    ************************************************************************/
-
-    return make_image(1,1,1);
-}
+//void l1_normalize(image im)
+//{
+//    // TODO
+//    /***********************************************************************
+//      This function divides each value in an image "im" by the sum of all the
+//      values in the image and modifies the image in place.
+//    ************************************************************************/
+//    float sum=0;
+//    for (int i=0;i<im.c;i=i+1){
+//        for (int j=0;j<im.h;j=j+1){
+//            for (int k=0;k<im.w;k=k+1){
+//                sum=sum+get_pixel(im,k,j,i);
+//            }
+//        }
+//
+//    }
+//    for (int i=0;i<im.c;i=i+1){
+//        for (int j=0;j<im.h;j=j+1){
+//            for (int k=0;k<im.w;k=k+1){
+//                set_pixel(im,k,j,i,get_pixel(im,k,j,i)/sum);
+//            }
+//        }
+//
+//    }
+//}
+//
+//image make_box_filter(int w)
+//{
+//    // TODO
+//    /***********************************************************************
+//      This function makes a square filter of size "w x w". Hint:
+//      Change the "make_image" arguments so that it is a square image of
+//      width = height = w and number of channels = 1, with all entries equal
+//      to 1. Then use "l1_normalize" to normalize your filter.
+//    ************************************************************************/
+//    image filter=make_image(w,w,1);
+//    for (int i=0;i<w;i=i+1){
+//        for (int j=0;j<w;j=j+1){
+//            set_pixel(filter,j,i,0,1);
+//        }
+//    }
+//    l1_normalize(filter);
+//    return filter;
+//}
