@@ -112,6 +112,7 @@ image convolve_image(image im, image filter, int preserve)
 
         return gray;
     }
+
     return newim;
 }
 
@@ -256,7 +257,17 @@ image make_gx_filter()
     /***********************************************************************
     Create a 3x3 Sobel Gx filter and return it
     ************************************************************************/
-    return make_image(1,1,1);
+    image filter=make_image(3,3,1);
+    set_pixel(filter,0,0,0,-1);
+    set_pixel(filter,0,1,0,-2);
+    set_pixel(filter,0,2,0,-1);
+    set_pixel(filter,1,0,0,0);
+    set_pixel(filter,1,1,0,0);
+    set_pixel(filter,1,2,0,0);
+    set_pixel(filter,2,0,0,1);
+    set_pixel(filter,2,1,0,2);
+    set_pixel(filter,2,2,0,1);
+    return filter;
 }
 
 image make_gy_filter()
@@ -265,7 +276,17 @@ image make_gy_filter()
     /***********************************************************************
     Create a 3x3 Sobel Gy filter and return it
     ************************************************************************/
-    return make_image(1,1,1);
+    image filter=make_image(3,3,1);
+    set_pixel(filter,0,0,0,-1);
+    set_pixel(filter,0,1,0,0);
+    set_pixel(filter,0,2,0,1);
+    set_pixel(filter,1,0,0,-2);
+    set_pixel(filter,1,1,0,0);
+    set_pixel(filter,1,2,0,2);
+    set_pixel(filter,2,0,0,-1);
+    set_pixel(filter,2,1,0,0);
+    set_pixel(filter,2,2,0,1);
+    return filter;
 }
 
 image *sobel_image(image im)
@@ -283,10 +304,22 @@ image *sobel_image(image im)
     by calling rst[1]
     ************************************************************************/
     image *rst = calloc(2, sizeof(image));
-
-
-    rst[0] = make_image(im.w, im.h, 1);
-    rst[1] = make_image(im.w, im.h, 1);
+    image gx_filter=make_gx_filter();
+    image Gx=convolve_image(im,gx_filter,0);
+    image gy_filter=make_gy_filter();
+    image Gy=convolve_image(im,gy_filter,0);
+    image magnitude=make_image(im.w,im.h,1);
+    image direction=make_image(im.w,im.h,1);
+    for(int j=0;j<magnitude.h;++j){
+            for(int k=0;k<magnitude.w;++k){
+                float mag=pow(pow(get_pixel(Gx,k,j,0),2)+pow(get_pixel(Gy,k,j,0),2),0.5);
+                set_pixel(magnitude,k,j,0,mag);
+                float theta=atan2f(get_pixel(Gy,k,j,0),get_pixel(Gx,k,j,0));
+                set_pixel(direction,k,j,0,theta);
+            }
+        }
+    rst[0] = magnitude;
+    rst[1] = direction;
 
     return rst;
 }
