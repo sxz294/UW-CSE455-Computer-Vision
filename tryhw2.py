@@ -31,6 +31,6 @@ normalize_image(mag)
 save_image(mag, "magnitude")
 
 # EXTRA CREDIT
-#im = load_image("figs/salt_petter_building.jpg")
-#med = apply_median_filter(im, 3)
-#save_image(med, "building-median")
+im = load_image("figs/salt_petter_building.jpg")
+med = apply_median_filter(im, 3)
+save_image(med, "building-median")

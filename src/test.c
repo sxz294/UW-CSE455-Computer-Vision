@@ -467,6 +467,19 @@ void test_sobel(){
     free(res);
 }
 
+//test median filter
+void test_median_filter(){
+    image im = load_image("figs/salt_petter_building.jpg");
+    image med = apply_median_filter(im, 3);
+    clamp_image(med);
+
+    image gt = load_image("figs/building-median.png");
+    TEST(same_image(med, gt, EPS));
+    free_image(im);
+    free_image(med);
+    free_image(gt);
+}
+
 void test_hw2()
 {
     test_gaussian_filter();
@@ -478,6 +491,8 @@ void test_hw2()
     test_hybrid_image();
     test_frequency_image();
     test_sobel();
+    // test median filter
+    test_median_filter();
     printf("%d tests, %d passed, %d failed\n", tests_total, tests_total-tests_fail, tests_fail);
 }
 

@@ -373,5 +373,19 @@ image apply_median_filter(image im, int kernel_size)
     Hint: use the qsort() function to sort an array. Make use of compare_float() as needed.
     ************************************************************************/
 
+    for (int i=0;i<im.c;i++){
+        for (int j=0;j<im.h;j++){
+            for (int k=0;k<im.w;k++){
+                float array[kernel_size*kernel_size];
+                for (int k1=0;k1<kernel_size;k1++){
+                    for (int k2=0;k2<kernel_size;k2++){
+                        array[k1*kernel_size+k2]=get_pixel(im,k-kernel_size/2+k2,j-kernel_size/2+k1,i);
+                    }
+                }
+                qsort(array,kernel_size*kernel_size,sizeof(float),compare_float);
+                set_pixel(out,k,j,i,array[kernel_size*kernel_size/2]);
+            }
+        }
+    }
     return out;
 }
