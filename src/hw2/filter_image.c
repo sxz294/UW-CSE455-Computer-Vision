@@ -216,7 +216,17 @@ image add_image(image a, image b)
     Sum the given two images and return the result.
     The result image should also have the same height, width, and channels as the inputs.
     ************************************************************************/
-    return make_image(1,1,1);
+    assert(a.w==b.w && a.h==b.h && a.c==b.c);
+    image newim=make_image(a.w,a.h,a.c);
+    for (int i=0; i<newim.c;++i){
+        for (int j=0;j<newim.h;++j){
+            for (int k=0;k<newim.w;++k){
+                float v=get_pixel(a,k,j,i)+get_pixel(b,k,j,i);
+                set_pixel(newim,k,j,i,v);
+            }
+        }
+    }
+    return newim;
 }
 
 image sub_image(image a, image b)
@@ -227,7 +237,17 @@ image sub_image(image a, image b)
     Subtract the given two images (a - b) and return the result.
     The result image should also have the same height, width, and channels as the inputs.
     ************************************************************************/
-    return make_image(1,1,1);
+    assert(a.w==b.w && a.h==b.h && a.c==b.c);
+    image newim=make_image(a.w,a.h,a.c);
+    for (int i=0; i<newim.c;++i){
+        for (int j=0;j<newim.h;++j){
+            for (int k=0;k<newim.w;++k){
+                float v=get_pixel(a,k,j,i)-get_pixel(b,k,j,i);
+                set_pixel(newim,k,j,i,v);
+            }
+        }
+    }
+    return newim;
 }
 
 image make_gx_filter()
