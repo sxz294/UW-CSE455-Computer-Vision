@@ -68,7 +68,7 @@ def field_panorama():
     save_image(pan5, "field_panorama_5")
 
 draw_corners()
-draw_matches()
-easy_panorama()
+# draw_matches()
+# easy_panorama()
 #rainier_panorama()
 #field_panorama()

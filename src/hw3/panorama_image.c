@@ -17,7 +17,7 @@ FILE CONTAINING ALL TODOs FOR THE HOMEWORK
 image make_1d_gaussian(float sigma)
 /**************************************************
 Create a separable (1-D) Gaussian filter of size given by input "sigma"
-TODO: 
+TODO:
 Fill this for extra credit
 **************************************************/
 {
@@ -39,7 +39,20 @@ TODO:
 7) Return the smoothed image
 **************************************************/
 {
-    image S = make_image(im.w, im.h, 3);
+    image gx_filter=make_gx_filter();
+    image Ix=convolve_image(im,gx_filter,0);
+    image gy_filter=make_gy_filter();
+    image Iy=convolve_image(im,gy_filter,0);
+    image SInit = make_image(im.w, im.h, 3);
+    for (int i=0;i<im.h;i++){
+        for (int j=0;j<im.w;j++){
+            set_pixel(SInit,j,i,0,pow(get_pixel(Ix,j,i,0),2));
+            set_pixel(SInit,j,i,1,pow(get_pixel(Iy,j,i,0),2));
+            set_pixel(SInit,j,i,2,get_pixel(Ix,j,i,0)*get_pixel(Iy,j,i,0));
+        }
+    }
+    image filter=make_gaussian_filter(sigma);
+    image S=convolve_image(SInit,filter,1);
     return S;
 }
 
@@ -56,6 +69,13 @@ Loop over each pixel position in "S"
 **************************************************/
 {
     image R = make_image(S.w, S.h, 1);
+    for (int i=0;i<S.h;i++){
+        for(int j=0;j<S.w;j++){
+            float determinant=get_pixel(S,j,i,0)*get_pixel(S,j,i,1)-pow(get_pixel(S,j,i,2),2);
+            float trace=get_pixel(S,j,i,0)+get_pixel(S,j,i,1);
+            set_pixel(R,j,i,0,determinant-0.06*pow(trace,2));
+        }
+    }
     return R;
 }
 
@@ -71,6 +91,24 @@ for every pixel in "R":
 **************************************************/
 {
     image r = copy_image(R);
+    for (int i=0;i<R.h;i++){
+        for (int j=0;j<R.w;j++){
+            float p=get_pixel(R,j,i,0);
+            for (int k1=0;k1<2*w;k1++){
+                for (int k2=0;k2<2*w;k2++){
+                    float q=get_pixel(R,j-w+k2,i-w+k1,0);
+                    if (q>p){
+                        p=-999999;
+                        set_pixel(r,j,i,0,p);
+                        break;
+                    }
+                }
+                if (p==-999999){
+                    break;
+                }
+            }
+        }
+    }
     return r;
 }
 
@@ -99,15 +137,31 @@ The "descriptor" structure is defined in "image.h"
     // For each pixel in Rnms:
     //      if pixel value > "thresh":
     //          increase value of count
-    int count = 1;
-    
+    int count = 0;
+    for (int i=0;i<Rnms.h;i++){
+        for (int j=0;j<Rnms.w;j++){
+            if (get_pixel(Rnms,j,i,0)>thresh){
+                count++;
+            }
+        }
+    }
+
+
     // TODO: fill in array "d" of descriptors of corners
     descriptor *d = calloc(count, sizeof(descriptor));
     // For each pixel in Rnms:
     //      if pixel value > "thresh":
     //          get descriptor for the current pixel using make_descriptor() defined in helpers.c
     //          update the array "d" with this descriptor
-
+    count=0;
+    for (int i=0;i<Rnms.h;i++){
+        for (int j=0;j<Rnms.w;j++){
+            if (get_pixel(Rnms,j,i,0)>thresh){
+                d[count]=make_descriptor(im, i*im.w+j);
+                count++;
+            }
+        }
+    }
 
     free_image(S);
     free_image(R);
@@ -170,8 +224,8 @@ The "match" structure is defined in "image.h"
     //          set it to seen (make the corresponding value in "seen" to 1)
     //          assign the current match to m[count] and then update count
     //      else continue
-    
-    
+
+
     // Update the number of final matches
     *mn = count;
     free(seen);
@@ -190,13 +244,13 @@ Return the projected point "q". Details inline.
     // Create c matrix using point "p"
     matrix c = make_matrix(3, 1);
     // TODO: Fill in "c" matrix with x-coordinate of p, y-coordinate of p, and 1
-    
+
     // Multiply "H" with the created c matrix
     matrix m = matrix_mult_matrix(H, c);
 
     point q;
     // TODO: Assign x,y coordinates of "q" using homogenous coordinates from "m"
-    
+
 
     free_matrix(c);
     free_matrix(m);
@@ -234,9 +288,9 @@ Returns matrix representing most common homography between matches.
 Inputs:
 array "m" of "n" matches
 "thresh": threshold for inlier modeling
-"iter": number of iterations 
+"iter": number of iterations
 "cutoff": inlier cutoff to exit early
-TODO: 
+TODO:
 For "iter" iterations:
     compute a homography with 4 matches using compute_homography() defined in panorama_helpers.c
     if no homography, continue, else
@@ -245,7 +299,7 @@ For "iter" iterations:
         compute updated homography using all inliers
         if no homography, continue, else
         compute updated #inliers using updated homography and assign it to max_inliers
-        if updated #inliers > cutoff: 
+        if updated #inliers > cutoff:
             return the best homography
 If we get to the end, return the best homography
 **************************************************/
@@ -253,7 +307,7 @@ If we get to the end, return the best homography
     // Initializations
     int max_inliers = 0;
     matrix best_H = make_translation_homography(256, 0);
-    
+
     return best_H;
 }
 
@@ -296,7 +350,7 @@ More details are provided inline.
 
     int i,j,k;
     image combined_img = make_image(w, h, a.c);
-    
+
     // TODO:
     // Loop over all pixels in image a
     //      get current pixel value
@@ -308,7 +362,7 @@ More details are provided inline.
     //      if the projected point's coordinates lie within the bounds for image b:
     //          estimate the value at the projected point location using bilinear_interpolate()
     //          assign it to the corresponding pixel offset by "dx" and "dy" in "combined_img"
-    
+
 
     return combined_img;
 }
@@ -319,7 +373,7 @@ image cylindrical_project(image im, float f)
 Project an image "im" onto a cylinder using focal length "f"
 The formulas are given in the lecture slides
 TODO:
-Attempt for extra credit. Return the projected image. 
+Attempt for extra credit. Return the projected image.
 **************************************************/
 {
     image c = copy_image(im);
