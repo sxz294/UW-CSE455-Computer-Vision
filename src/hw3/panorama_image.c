@@ -198,6 +198,14 @@ The "match" structure is defined in "image.h"
         for(i = 0; i < bn; ++i){
             // TODO: Compute L1 distance between the two descriptors
             // and update min_distance and best_index as necessary
+            float distance_L1=0;
+            for (k=0;k<a[j].n;k++){
+                distance_L1=distance_L1+fabsf(a[j].data[k]-b[i].data[k]);
+            }
+            if (distance_L1<min_distance){
+                min_distance=distance_L1;
+                best_index=i;
+            }
         }
 
         // Update the match
@@ -224,13 +232,21 @@ The "match" structure is defined in "image.h"
     //          set it to seen (make the corresponding value in "seen" to 1)
     //          assign the current match to m[count] and then update count
     //      else continue
-
+    for (int h=0;h<*mn;h++){
+        if (seen[m[h].bi]==0){
+            seen[m[h].bi]=1;
+            m[count]=m[h];
+            count++;
+        }
+    }
 
     // Update the number of final matches
     *mn = count;
     free(seen);
     return m;
 }
+
+
 
 
 point project_point(matrix H, point p)
