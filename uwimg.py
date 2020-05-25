@@ -34,6 +34,14 @@ class MATRIX(Structure):
                 ("cols", c_int),
                 ("data", POINTER(POINTER(c_double))),
                 ("shallow", c_int)]
+# add for test
+class MATCH(Structure):
+    _fields_ = [("p", POINT),
+                ("q", POINT),
+                ("ai", c_int),
+                ("bi", c_int),
+                ("distance", c_float),
+                ]
 
 class DATA(Structure):
     _fields_ = [("X", MATRIX),
@@ -217,6 +225,15 @@ panorama_image_lib = lib.panorama_image
 panorama_image_lib.argtypes = [IMAGE, IMAGE, c_float, c_float, c_int, c_float, c_int, c_int, c_int]
 panorama_image_lib.restype = IMAGE
 
+# add for test
+compute_homography=lib.compute_homography
+compute_homography.argtypes=[MATCH,c_int]
+compute_homography.restype=MATRIX
+
+make_point=lib.make_point
+make_point.argtypes=[c_float,c_float]
+make_point.restype=POINT
+
 def panorama_image(a, b, sigma=2, thresh=5, nms=3, inlier_thresh=2, iters=10000, cutoff=30, draw=0):
     return panorama_image_lib(a, b, sigma, thresh, nms, inlier_thresh, iters, cutoff, draw)
 
@@ -237,6 +254,34 @@ optical_flow_images.restype = IMAGE
 optical_flow_webcam = lib.optical_flow_webcam
 optical_flow_webcam.argtypes = [c_int, c_int, c_int]
 optical_flow_webcam.restype = None
+
+##### HOMEWORK 5
+
+train_model = lib.train_model
+train_model.argtypes = [MODEL, DATA, c_int, c_int, c_double, c_double, c_double]
+train_model.restype = None
+
+accuracy_model = lib.accuracy_model
+accuracy_model.argtypes = [MODEL, DATA]
+accuracy_model.restype = c_double
+
+forward_model = lib.forward_model
+forward_model.argtypes = [MODEL, MATRIX]
+forward_model.restype = MATRIX
+
+load_classification_data = lib.load_classification_data
+load_classification_data.argtypes = [c_char_p, c_char_p, c_int]
+load_classification_data.restype = DATA
+
+make_layer = lib.make_layer
+make_layer.argtypes = [c_int, c_int, c_int]
+make_layer.restype = LAYER
+
+def make_model(layers):
+    m = MODEL()
+    m.n = len(layers)
+    m.layers = (LAYER*m.n) (*layers)
+    return m
 
 if __name__ == "__main__":
     im = load_image("data/dog.jpg")

@@ -118,6 +118,44 @@ float bilinear_interpolate(image im, float x, float y, int c)
     return q;
 }
 
+//int cap_index(int index, int size) {
+//  return index < size - 1 ? index >= 0 ? index : 0 : size - 1;
+//}
+//
+//void find_bound(int *bound, float current_pos, int size) {
+//  bound[0] = cap_index((int)current_pos, size);
+//  bound[1] = cap_index((int)(current_pos + 1), size);
+//}
+//
+//void find_distances(float *dis, float current_pos, int *bound) {
+//  if (bound[0] == bound[1]) {
+//    dis[0] = 0.5;
+//    dis[1] = 0.5;
+//  } else {
+//    dis[0] = current_pos - bound[0];
+//    dis[1] = bound[1] - current_pos;
+//  }
+//}
+//
+//float bilinear_interpolate(image im, float x, float y, int c) {
+//  int rows[2], cols[2], row, col;
+//  float d_rows[2], d_cols[2], color_value = 0;
+//
+//  find_bound(rows, y, im.h);
+//  find_bound(cols, x, im.w);
+//
+//  find_distances(d_rows, y, rows);
+//  find_distances(d_cols, x, cols);
+//
+//  for (row = 0; row < 2; row++) {
+//    for (col = 0; col < 2; col++) {
+//      color_value += get_pixel(im, cols[col], rows[row], c) * d_rows[1 - row] *
+//                     d_cols[1 - col];
+//    }
+//  }
+//  return color_value;
+//}
+
 image bilinear_resize(image im, int w, int h)
 {
     // TODO
@@ -151,47 +189,3 @@ image bilinear_resize(image im, int w, int h)
   normalize it.That's what we'll do because the normalization function may
   be useful in the future!
 ************************************************************************/
-//void l1_normalize(image im)
-//{
-//    // TODO
-//    /***********************************************************************
-//      This function divides each value in an image "im" by the sum of all the
-//      values in the image and modifies the image in place.
-//    ************************************************************************/
-//    float sum=0;
-//    for (int i=0;i<im.c;i=i+1){
-//        for (int j=0;j<im.h;j=j+1){
-//            for (int k=0;k<im.w;k=k+1){
-//                sum=sum+get_pixel(im,k,j,i);
-//            }
-//        }
-//
-//    }
-//    for (int i=0;i<im.c;i=i+1){
-//        for (int j=0;j<im.h;j=j+1){
-//            for (int k=0;k<im.w;k=k+1){
-//                set_pixel(im,k,j,i,get_pixel(im,k,j,i)/sum);
-//            }
-//        }
-//
-//    }
-//}
-//
-//image make_box_filter(int w)
-//{
-//    // TODO
-//    /***********************************************************************
-//      This function makes a square filter of size "w x w". Hint:
-//      Change the "make_image" arguments so that it is a square image of
-//      width = height = w and number of channels = 1, with all entries equal
-//      to 1. Then use "l1_normalize" to normalize your filter.
-//    ************************************************************************/
-//    image filter=make_image(w,w,1);
-//    for (int i=0;i<w;i=i+1){
-//        for (int j=0;j<w;j=j+1){
-//            set_pixel(filter,j,i,0,1);
-//        }
-//    }
-//    l1_normalize(filter);
-//    return filter;
-//}

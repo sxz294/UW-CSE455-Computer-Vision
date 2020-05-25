@@ -228,20 +228,20 @@ Computes homography between two images using "n" random matches from an array "m
         M.data[i*2][2] = 1;
         M.data[i*2][6] = -px*qx;
         M.data[i*2][7] = -py*qx;
-        
+
         M.data[i*2+1][3] = px;
         M.data[i*2+1][4] = py;
         M.data[i*2+1][5] = 1;
         M.data[i*2+1][6] = -px*qy;
         M.data[i*2+1][7] = -py*qy;
-        
+
         b.data[i*2][0] = qx;
         b.data[i*2+1][0] = qy;
     }
 
     // Find the solution to the equation Ma = b
     matrix a = solve_system(M, b);
-    free_matrix(M); free_matrix(b); 
+    free_matrix(M); free_matrix(b);
 
     // If a solution can't be found, return empty matrix;
     matrix none = {0};
@@ -271,7 +271,7 @@ int cutoff: RANSAC inlier cutoff. Typical: 10-100
 {
     srand(10);
     int an = 0, bn = 0, mn = 0;
-    
+
     // Calculate descriptors of corners
     descriptor *ad = harris_corner_detector(a, sigma, thresh, nms, &an);
     descriptor *bd = harris_corner_detector(b, sigma, thresh, nms, &bn);
@@ -299,3 +299,5 @@ int cutoff: RANSAC inlier cutoff. Typical: 10-100
     image combined = combine_images(a, b, H);
     return combined;
 }
+
+

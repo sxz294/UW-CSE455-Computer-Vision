@@ -14,8 +14,23 @@ def draw_matches():
 def easy_panorama():
     im1 = load_image("data/Rainier1.png")
     im2 = load_image("data/Rainier2.png")
-    pan = panorama_image(im1, im2, thresh=50, draw=1)
+    # pan = panorama_image(im1, im2, thresh=50, draw=1)
+    pan=panorama_image(im1, im2, 2, 50, 3, 2, 10000, 30, 0);
+    # pan = panorama_image(im1, im2, 2, 5, 3, 2, 10000, 30, 0);
     save_image(pan, "panorama")
+
+# def test_computer_homo():
+#     m=array(MATCH,4)
+#     m[0].p = make_point(7.2, 1.3);
+#     m[0].q = make_point(10, 10.9);
+#     m[1].p = make_point(3, 3);
+#     m[1].q = make_point(1.3, 7.3);
+#     m[2].p = make_point(-.2, -3.4);
+#     m[2].q = make_point(.8, 2.6);
+#     m[3].p = make_point(-3.2, 2.4);
+#     m[3].q = make_point(1.5, -4.2);
+#     H = compute_homography(m, 4);
+#     print(H)
 
 def rainier_panorama():
     im1 = load_image("data/Rainier1.png")
@@ -69,6 +84,7 @@ def field_panorama():
 
 draw_corners()
 draw_matches()
+# test_computer_homo()
 easy_panorama()
 rainier_panorama()
 #field_panorama()

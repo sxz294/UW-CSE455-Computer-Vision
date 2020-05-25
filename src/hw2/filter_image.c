@@ -58,21 +58,21 @@ image convolve_image(image im, image filter, int preserve)
     // TODO
     /***********************************************************************
     im: an image with shape "h x w x c"
-    filter: a convolution filter with shape "k1 x k2 x k3".
+    filter: a convolution filter with shape "k1 x k2 x k3". 
     Preserve: an integer, which is usually either 0 or 1.
 
-    - If `filter` and `im` have the same number of channels then it's just a normal
-    convolution. We sum over spatial and channel dimensions and produce a 1 channel image.
+    - If `filter` and `im` have the same number of channels then it's just a normal 
+    convolution. We sum over spatial and channel dimensions and produce a 1 channel image. 
     UNLESS:
-        If `preserve` is set to 1 we should produce an image with the same number of
-        channels as the input. This is useful if, for example, we want to run a box
-        filter over an RGB image and get out an RGB image. This means each channel in
+        If `preserve` is set to 1 we should produce an image with the same number of 
+        channels as the input. This is useful if, for example, we want to run a box 
+        filter over an RGB image and get out an RGB image. This means each channel in 
         the image will be filtered by the corresponding channel in the filter.
     If the `filter` only has one channel but `im` has multiple channels we want to
-    apply the filter to each of those channels. Then we either sum between channels
+    apply the filter to each of those channels. Then we either sum between channels 
     or not depending on if `preserve` is set.
 
-    Also, `filter` better have either the same number of channels as `im` or have one channel.
+    Also, `filter` better have either the same number of channels as `im` or have one channel. 
     I check this with an `assert`.
     ************************************************************************/
 
@@ -186,7 +186,7 @@ image make_gaussian_filter(float sigma)
     /***********************************************************************
     sigma: a float number for the Gaussian.
 
-    Create a Gaussian filter with the given sigma. Note that the kernel size
+    Create a Gaussian filter with the given sigma. Note that the kernel size 
     is the next highest odd integer from 6x sigma.
 
     Return the Gaussian filter.
@@ -214,7 +214,7 @@ image add_image(image a, image b)
     // TODO
     /***********************************************************************
     The input images a and image b have the same height, width, and channels.
-    Sum the given two images and return the result.
+    Sum the given two images and return the result. 
     The result image should also have the same height, width, and channels as the inputs.
     ************************************************************************/
     assert(a.w==b.w && a.h==b.h && a.c==b.c);
@@ -293,14 +293,14 @@ image *sobel_image(image im)
 {
     // TODO
     /***********************************************************************
-    im: the input image is either a "h x w x 3" RGB image or "h x w x 1" grayscale
+    im: the input image is either a "h x w x 3" RGB image or "h x w x 1" grayscale 
     image.
-
-    Apply Sobel filter to the given image, get the magnitude and gradient,
-    and return the result.
+    
+    Apply Sobel filter to the given image, get the magnitude and gradient, 
+    and return the result. 
 
     Hint: the "calloc" function can allocate the memory for your output. You can
-    assess the first image (magnitute) by calling rst[0] and the second image
+    assess the first image (magnitute) by calling rst[0] and the second image 
     by calling rst[1]
     ************************************************************************/
     image *rst = calloc(2, sizeof(image));
@@ -366,7 +366,7 @@ image apply_median_filter(image im, int kernel_size)
 
     We assume a median filter is a square, with the same height and width.
     The kernel size is always a positive odd number. We use "clamp" padding
-    for borders and corners. The output image should have the same width,
+    for borders and corners. The output image should have the same width, 
     height, and channels as the input image. You should apply median filter
     to each channel of the input image `im`.
 

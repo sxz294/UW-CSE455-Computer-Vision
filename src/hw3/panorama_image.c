@@ -17,7 +17,7 @@ FILE CONTAINING ALL TODOs FOR THE HOMEWORK
 image make_1d_gaussian(float sigma)
 /**************************************************
 Create a separable (1-D) Gaussian filter of size given by input "sigma"
-TODO:
+TODO: 
 Fill this for extra credit
 **************************************************/
 {
@@ -146,7 +146,7 @@ The "descriptor" structure is defined in "image.h"
         }
     }
 
-
+    
     // TODO: fill in array "d" of descriptors of corners
     descriptor *d = calloc(count, sizeof(descriptor));
     // For each pixel in Rnms:
@@ -446,4 +446,5 @@ Attempt for extra credit. Return the projected image.
     image c = copy_image(im);
     return c;
 }
+
 
