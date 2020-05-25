@@ -247,8 +247,6 @@ The "match" structure is defined in "image.h"
 }
 
 
-
-
 point project_point(matrix H, point p)
 /**************************************************
 Apply a projective transformation using homography "H" to the point "p".
@@ -260,19 +258,22 @@ Return the projected point "q". Details inline.
     // Create c matrix using point "p"
     matrix c = make_matrix(3, 1);
     // TODO: Fill in "c" matrix with x-coordinate of p, y-coordinate of p, and 1
+    c.data[0][0]=p.x;
+    c.data[1][0]=p.y;
+    c.data[2][0]=1;
 
     // Multiply "H" with the created c matrix
     matrix m = matrix_mult_matrix(H, c);
 
     point q;
     // TODO: Assign x,y coordinates of "q" using homogenous coordinates from "m"
-
+    q.x=m.data[0][0]/m.data[2][0];
+    q.y=m.data[1][0]/m.data[2][0];
 
     free_matrix(c);
     free_matrix(m);
     return q;
 }
-
 
 int model_inliers(matrix H, match *m, int n, float thresh)
 /**************************************************
@@ -293,6 +294,18 @@ Note: In this way, you are sorting the matches so that the inliers are the first
 **************************************************/
 {
     int count = 0;
+    for (int i=n-1;i>=count;i--){
+        point project_p=project_point(H,m[i].p);
+        float distance_L2=pow(pow(project_p.x-m[i].q.x,2)+pow(project_p.y-m[i].q.y,2),0.5);
+        if (distance_L2<thresh){
+            match temp=m[count];
+            m[count]=m[i];
+            m[i]=temp;
+            count++;
+            i++;
+
+        }
+    }
     return count;
 }
 
@@ -323,9 +336,28 @@ If we get to the end, return the best homography
     // Initializations
     int max_inliers = 0;
     matrix best_H = make_translation_homography(256, 0);
-
+    for(int i=0;i<iter;i++){
+        matrix candidate = compute_homography(m,n,4);
+        if (candidate.data){
+            int inliers=model_inliers(candidate,m,n,thresh);
+            if(inliers>max_inliers){
+                candidate = compute_homography(m,n, inliers);
+                if (candidate.data){
+                    inliers=model_inliers(candidate,m,n,thresh);
+                    if (inliers>max_inliers){
+                        best_H=candidate;
+                        max_inliers=inliers;
+                        if (max_inliers>cutoff){
+                            return best_H;
+                        }
+                    }
+                }
+            }
+        }
+    }
     return best_H;
 }
+
 
 
 image combine_images(image a, image b, matrix H)
@@ -378,7 +410,26 @@ More details are provided inline.
     //      if the projected point's coordinates lie within the bounds for image b:
     //          estimate the value at the projected point location using bilinear_interpolate()
     //          assign it to the corresponding pixel offset by "dx" and "dy" in "combined_img"
+    for (i=0;i<a.c;i++){
+        for(j=0;j<a.h;j++){
+            for(k=0;k<a.w;k++){
+                set_pixel(combined_img,k-dx,j-dy,i,get_pixel(a,k,j,i));
+            }
+        }
+    }
 
+    for (i=0;i<combined_img.c;i++){
+        for(j=topleft.y;j<botright.y;j++){
+            for(k=topleft.x;k<botright.x;k++){
+                point p=make_point(k,j);
+                point project_p=project_point(H,p);
+                if (project_p.x<b.w && project_p.x>=0 && project_p.y<b.h && project_p.y>=0){
+                    float v=bilinear_interpolate(b,project_p.x,project_p.y,i);
+                    set_pixel(combined_img,k-dx,j-dy,i,v);
+                }
+            }
+        }
+    }
 
     return combined_img;
 }
@@ -395,3 +446,4 @@ Attempt for extra credit. Return the projected image.
     image c = copy_image(im);
     return c;
 }
+
